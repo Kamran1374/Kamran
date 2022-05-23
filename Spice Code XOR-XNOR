@@ -1,0 +1,56 @@
+* Netlist by K.Hosseini NIT University
+*AND and OR gate
+*10/28/2021
+
+V1 A Gnd PULSE(1 0 1n 0 0 0.8n 1.5n 20)
+V2 B Gnd PULSE(0 1 1n 0 0 1n 2n 20)
+V3 VDD Gnd DC 1
+
+*XOR Gate
+X6 A B Y AND
+X7 Y YNAND VDD 0 GND MI
+X8 A B YOR OR
+X9 YNAND YOR XOR1 AND
+X10 XOR1 XOR2 VDD 0 GND MI
+X11 XOR2 XOR VDD 0 GND MI
+
+*XNOR Gate
+X12 A B Y1 AND
+X13 Y1 YNAND1 VDD 0 GND MI
+X14 A B YOR1 OR
+X15 YNAND1 YOR1 XOR3 AND
+X16 XOR3 XNOR VDD 0 GND MI
+
+
+
+
+
+*MI Gate
+.subckt MI A1 Y1 VDD 0 GND
+X1 Y1 VDD MEM_KNOWM Ron=100 Roff=10000 Von=0.2 Voff=0.2 TAU=5E-20 x0=0
+M1 Y1 A1 GND 0 N_50n l=50n w=1.5u
+.include cmosedu_models.txt
+.lib mem_knowm.sub
+.ends MI
+
+* AND Gate SUB
+.subckt AND A2 B2 Y2
+X2 Y2 A2  MEM_KNOWM Ron=100 Roff=10k Von=0.2 Voff=0.2 TAU=5E-15 x0=0
+X3 Y2 B2  MEM_KNOWM Ron=100 Roff=10k Von=0.2 Voff=0.2 TAU=5E-15 x0=0
+.lib mem_knowm.sub
+.ends AND
+
+*OR Gate SUB
+.subckt OR A3 B3 Y3
+X4 A3 Y3  MEM_KNOWM Ron=100 Roff=10000 Von=0.2 Voff=0.2 TAU=5E-15 x0=0
+X5 B3 Y3  MEM_KNOWM Ron=100 Roff=10000 Von=0.2 Voff=0.2 TAU=5E-15 x0=0
+.lib mem_knowm.sub
+.ends OR
+
+*simulation
+.tran 0.01p 20n uic
+.model nmos nmos
+.lib mem_knowm.sub
+.include cmosedu_models.txt
+.backanno
+.end

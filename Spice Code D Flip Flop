@@ -1,0 +1,61 @@
+* Netlist by K.Hosseini Tehran University
+*AND and OR gate
+*10/28/2021
+
+V1 A Gnd PULSE(1 0 1n 0 0 2n 1.5n 20)
+V2 B Gnd PULSE(0 1 1n 0 0 0.5n 1n 20)
+V3 VDD Gnd DC 1
+
+*D Flip Flop
+X1 A ANOT VDD 0 GND MI
+
+X2 A B Y1 AND
+X3 Y1 Y VDD 0 GND MI
+X4 B Anot Y2 AND
+X5 Y2 Y3 VDD 0 GND MI
+X6 Y3 Q Q1 AND
+X7 Q1 Qbar VDD 0 GND MI
+X8 Y Qbar Q2 AND
+X9 Q2 Q VDD 0 GND MI
+
+
+
+
+
+*MI Gate
+.subckt MI A1 Y1 VDD 0 GND
+X1 Y1 VDD MEM_KNOWM Ron=100 Roff=10000 Von=0.2 Voff=0.2 TAU=5E-20 x0=0
+M1 Y1 A1 GND 0 N_50n l=50n w=1.5u
+.include cmosedu_models.txt
+.lib mem_knowm.sub
+.ends MI
+
+* AND Gate SUB
+.subckt AND A2 B2 Y2
+X2 Y2 A2  MEM_KNOWM Ron=100 Roff=10k Von=0.2 Voff=0.2 TAU=5E-15 x0=0
+X3 Y2 B2  MEM_KNOWM Ron=100 Roff=10k Von=0.2 Voff=0.2 TAU=5E-15 x0=0
+.lib mem_knowm.sub
+.ends AND
+
+*OR Gate SUB
+.subckt OR A3 B3 Y3
+X4 A3 Y3  MEM_KNOWM Ron=100 Roff=10000 Von=0.2 Voff=0.2 TAU=5E-15 x0=0
+X5 B3 Y3  MEM_KNOWM Ron=100 Roff=10000 Von=0.2 Voff=0.2 TAU=5E-15 x0=0
+.lib mem_knowm.sub
+.ends OR
+
+*INVERTER
+.subckt INV A1 Y1 VDD 0 GND
+M1 VDD A1 Y1 VDD P_50n l=50n w=1.5u
+M2 Y1 A1 GND 0 N_50n l=50n w=1.5u
+.include cmosedu_models.txt
+.lib mem_knowm.sub
+.ends INV
+
+*simulation
+.tran 0.01p 20n uic
+.model nmos nmos
+.lib mem_knowm.sub
+.include cmosedu_models.txt
+.backanno
+.end
